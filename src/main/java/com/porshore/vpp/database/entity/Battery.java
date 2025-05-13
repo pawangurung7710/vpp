@@ -1,13 +1,14 @@
 package com.porshore.vpp.database.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 /**
  * @author <Pawan Gurung>
  */
 @Entity
 @Table(name = "batteries")
-
+@Data
 public class Battery {
 
     @Id
@@ -24,36 +25,12 @@ public class Battery {
     @Column(name = "watt_capacity", nullable = false)
     private int wattCapacity;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(name = "CREATED_AT", length = 40)
+    private String createdAt;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column(name = "UPDATED_AT", length = 40)
+    private String updatedAt;
 
-    public int getWattCapacity() {
-        return wattCapacity;
-    }
 
-    public void setWattCapacity(int wattCapacity) {
-        this.wattCapacity = wattCapacity;
-    }
-
-    public String getPostcode() {
-        return postcode;
-    }
-
-    public void setPostcode(String postcode) {
-        this.postcode = postcode;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }
 
