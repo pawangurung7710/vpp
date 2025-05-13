@@ -6,6 +6,7 @@ import com.porshore.vpp.database.repo.BatteryRepository;
 import com.porshore.vpp.exceptions.VppException;
 import com.porshore.vpp.request.BatteryRequest;
 import com.porshore.vpp.response.BatteryAddResponse;
+import com.porshore.vpp.response.BatteryStatsResponse;
 import com.porshore.vpp.response.ResponseDto;
 import com.porshore.vpp.service.BatteryService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +43,6 @@ public class BatteryServiceImpl implements BatteryService {
 
             List<Battery> savedBatteries = batteryRepository.saveAll(batteries);
             return BatteryAddResponse.successResponse("Batteries added successfully", savedBatteries.size());
-
-        } catch (VppException vppException) {
-            log.error("Error while adding the batteries : ", vppException);
-            throw vppException;
         } catch (Exception e) {
             log.error("Error while adding the batteries : ", e);
             throw new VppException(ApiConstant.VPP_FAILED, "Error");
@@ -54,11 +51,50 @@ public class BatteryServiceImpl implements BatteryService {
 
     }
 
+    public ResponseDto getBatteryStats(String postcodeStart, String postcodeEnd, Double minCapacity, Double maxCapacity) {
+        log.info("Get batteries status");
+
+        try {
+        //assumption Postcode can be alphanumeric
+        List<Battery> batteries = batteryRepository.findByCapacityRange(minCapacity, maxCapacity);
+        List<Battery> filteredBatteries = batteries.stream()
+                .filter(b -> {
+                    try {
+                        int postcodeInt = Integer.parseInt(b.getPostcode());
+                        int postcodeStartInt = Integer.parseInt(postcodeStart);
+                        int postcodeEndInt = Integer.parseInt(postcodeEnd);
+                        return postcodeInt >= postcodeStartInt && postcodeInt <= postcodeEndInt;
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                })
+                .toList();
+
+        List<String> batteryNames = filteredBatteries.stream()
+                .map(Battery::getName)
+                .sorted()
+                .toList();
+
+        double total = filteredBatteries.stream()
+                .mapToDouble(Battery::getWattCapacity)
+                .sum();
+
+        double average = filteredBatteries.isEmpty() ? 0.0 :
+                total / filteredBatteries.size();
+
+        return  BatteryStatsResponse.successResponse(batteryNames, total, average);
+        } catch (Exception e) {
+            log.error("Error while fetching batteries status: ", e);
+            throw new VppException(ApiConstant.VPP_FAILED, "Error");
+        }
+    }
+
     private Battery buildBattery(BatteryRequest batteryRequest) {
         Battery battery = new Battery();
         battery.setName(batteryRequest.getName());
         battery.setPostcode(batteryRequest.getPostcode());
         battery.setWattCapacity(batteryRequest.getCapacity());
+        battery.setCreatedAt(System.currentTimeMillis());
 
         return battery;
     }

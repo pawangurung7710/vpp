@@ -23,6 +23,7 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(VppException.class)
     public ResponseEntity<ResponseDto> handleVppException(VppException vppException) {
+        log.error("VppException: ", vppException);
         return ResponseDto.exceptionResponse(
                 vppException.getResult(),
                 vppException.getCode(),

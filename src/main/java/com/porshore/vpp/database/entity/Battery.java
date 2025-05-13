@@ -25,12 +25,11 @@ public class Battery {
     @Column(name = "watt_capacity", nullable = false)
     private int wattCapacity;
 
-    @Column(name = "CREATED_AT", length = 40)
-    private String createdAt;
+    @Column(name = "created_at", length = 40)
+    private Long  createdAt;
 
-    @Column(name = "UPDATED_AT", length = 40)
-    private String updatedAt;
-
+    @Column(name = "updated_at", length = 40)
+    private Long updatedAt;
 
 }
 
