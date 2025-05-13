@@ -40,6 +40,7 @@ public class BatteryServiceImpl implements BatteryService {
             List<Battery> batteries = batteryRequestList.stream()
                     .map(this::buildBattery)
                     .toList();
+            log.info("Successfully added {} batteries", batteries.size());
 
             List<Battery> savedBatteries = batteryRepository.saveAll(batteries);
             return BatteryAddResponse.successResponse("Batteries added successfully", savedBatteries.size());
@@ -52,8 +53,10 @@ public class BatteryServiceImpl implements BatteryService {
     }
 
     public ResponseDto getBatteryStats(String postcodeStart, String postcodeEnd, Double minCapacity, Double maxCapacity) {
-        log.info("Get batteries status");
-
+        log.info(
+                "Fetching battery stats for postcodes {} to {} (Capacity: {} - {})",
+                postcodeStart, postcodeEnd, minCapacity, maxCapacity
+        );
         try {
         //assumption Postcode can be alphanumeric
         List<Battery> batteries = batteryRepository.findByCapacityRange(minCapacity, maxCapacity);
@@ -70,7 +73,9 @@ public class BatteryServiceImpl implements BatteryService {
                 })
                 .toList();
 
-        List<String> batteryNames = filteredBatteries.stream()
+            log.debug("Found {} batteries in range", filteredBatteries.size());
+
+            List<String> batteryNames = filteredBatteries.stream()
                 .map(Battery::getName)
                 .sorted()
                 .toList();
@@ -82,6 +87,11 @@ public class BatteryServiceImpl implements BatteryService {
         double average = filteredBatteries.isEmpty() ? 0.0 :
                 total / filteredBatteries.size();
 
+            log.info(
+                    "Stats calculated: Total={}, Average={}, Batteries={}",
+                    total, average, batteryNames.size()
+            );
+
         return  BatteryStatsResponse.successResponse(batteryNames, total, average);
         } catch (Exception e) {
             log.error("Error while fetching batteries status: ", e);
@@ -90,6 +100,7 @@ public class BatteryServiceImpl implements BatteryService {
     }
 
     private Battery buildBattery(BatteryRequest batteryRequest) {
+        log.debug("Building battery entity for {}", batteryRequest.getName());
         Battery battery = new Battery();
         battery.setName(batteryRequest.getName());
         battery.setPostcode(batteryRequest.getPostcode());

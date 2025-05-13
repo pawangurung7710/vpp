@@ -5,6 +5,7 @@ import com.porshore.vpp.response.BatteryStatsResponse;
 import com.porshore.vpp.response.ResponseDto;
 import com.porshore.vpp.service.BatteryService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.List;
  * @author <Pawan Gurung>
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/api/batteries")
 public class BatteryController {
@@ -26,6 +28,7 @@ public class BatteryController {
 
     @PostMapping()
     public ResponseEntity<ResponseDto> addBatteries(@RequestBody @Valid List<BatteryRequest> batteryRequestList) {
+        log.info("POST /api/batteries - Received request to add {} batteries", batteryRequestList.size());
         ResponseDto responseDto = batteryService.addBatteries(batteryRequestList);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
@@ -36,6 +39,7 @@ public class BatteryController {
             @RequestParam String  postcodeEnd,
             @RequestParam(required = false) Double minCapacity,
             @RequestParam(required = false) Double maxCapacity) {
+        log.info("GET /api/batteries - Fetching stats for postcode range {} to {}", postcodeStart, postcodeEnd);
         ResponseDto response = batteryService.getBatteryStats(postcodeStart, postcodeEnd, minCapacity, maxCapacity);
         return ResponseEntity.ok(response);
     }
