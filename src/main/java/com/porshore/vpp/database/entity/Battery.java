@@ -20,10 +20,10 @@ public class Battery {
     private String name;
 
     @Column(name = "postcode", nullable = false, length = 20)
-    private String postcode;
+    private Integer postcode;
 
     @Column(name = "watt_capacity", nullable = false)
-    private int wattCapacity;
+    private Long wattCapacity;
 
     @Column(name = "created_at", length = 40)
     private Long  createdAt;

@@ -12,6 +12,6 @@ import java.util.List;
 public interface BatteryService {
      ResponseDto addBatteries(List<BatteryRequest> batteryRequestList);
 
-      ResponseDto getBatteryStats(String postcodeStart, String postcodeEnd, Double minCapacity, Double maxCapacity) ;
+      ResponseDto getBatteryStats(Integer postcodeStart, Integer postcodeEnd, Long minCapacity, Long maxCapacity) ;
 
      }

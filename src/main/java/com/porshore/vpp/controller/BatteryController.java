@@ -1,7 +1,6 @@
 package com.porshore.vpp.controller;
 
 import com.porshore.vpp.request.BatteryRequest;
-import com.porshore.vpp.response.BatteryStatsResponse;
 import com.porshore.vpp.response.ResponseDto;
 import com.porshore.vpp.service.BatteryService;
 import jakarta.validation.Valid;
@@ -35,10 +34,10 @@ public class BatteryController {
 
     @GetMapping
     public ResponseEntity<ResponseDto> getBatteryStats(
-            @RequestParam String postcodeStart,
-            @RequestParam String  postcodeEnd,
-            @RequestParam(required = false) Double minCapacity,
-            @RequestParam(required = false) Double maxCapacity) {
+            @RequestParam Integer postcodeStart,
+            @RequestParam Integer postcodeEnd,
+            @RequestParam(required = false) Long minCapacity,
+            @RequestParam(required = false) Long maxCapacity) {
         log.info("GET /api/batteries - Fetching stats for postcode range {} to {}", postcodeStart, postcodeEnd);
         ResponseDto response = batteryService.getBatteryStats(postcodeStart, postcodeEnd, minCapacity, maxCapacity);
         return ResponseEntity.ok(response);

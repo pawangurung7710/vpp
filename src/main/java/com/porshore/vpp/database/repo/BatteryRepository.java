@@ -14,12 +14,11 @@ import java.util.List;
 @Repository
 public interface BatteryRepository extends JpaRepository<Battery, Long> {
 
-    @Query("SELECT b FROM Battery b " +
-            "WHERE (:minCapacity IS NULL OR b.wattCapacity >= :minCapacity) " +
-            "AND (:maxCapacity IS NULL OR b.wattCapacity <= :maxCapacity)")
-    List<Battery> findByCapacityRange(
-            @Param("minCapacity") Double minCapacity,
-            @Param("maxCapacity") Double maxCapacity
+    List<Battery> findByPostcodeBetweenAndWattCapacityBetween(
+            int postcodeStart,
+            int postcodeEnd,
+            Long minCapacity,
+            Long maxCapacity
     );
 
 }
