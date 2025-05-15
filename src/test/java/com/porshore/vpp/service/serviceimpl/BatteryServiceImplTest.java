@@ -46,38 +46,20 @@ class BatteryServiceImplTest {
     @Test
     void testAddBatteries_success() {
 
-        //forming the request: save huna paro
         List<BatteryRequest> requests = List.of(batteryRequest);
-
-        //mocking the repo : same object should return
-        //save anyList() input doesnt matter
         when(batteryRepository.saveAll(anyList())).thenReturn(List.of(battery));
 
         ResponseDto response = batteryService.addBatteries(requests);
-
-        //just different level of testing
-        //just checking normal things
         assertNotNull(response);
         assertEquals("Batteries added successfully", response.getMessage());
         assertTrue(response.isStatus());
-
-
-        /**
-         *
-         * During execution of batteryService.addBatteries(...), the batteryRepository.saveAll(...) method was called exactly once
-         * And it was passed a List<Battery> (doesn’t matter what’s inside it, because you used anyList())*/
         verify(batteryRepository, times(1)).saveAll(anyList());
     }
-
 
     @Test
     void testAddBatteries_failure() {
         List<BatteryRequest> requests = List.of(batteryRequest);
-
-        //assume error in saving db
         when(batteryRepository.saveAll(anyList())).thenThrow(new RuntimeException("DB Error"));
-
-        //todo parameters , class-type and Executcables :functional interface, that have method execute
         VppException ex = assertThrows(VppException.class, () -> batteryService.addBatteries(requests));
 
         assertEquals(ApiConstant.VPP_FAILED.getCode(), ex.getCode());

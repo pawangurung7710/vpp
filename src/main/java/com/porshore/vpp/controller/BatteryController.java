@@ -4,6 +4,7 @@ import com.porshore.vpp.request.BatteryRequest;
 import com.porshore.vpp.response.ResponseDto;
 import com.porshore.vpp.service.BatteryService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,9 @@ public class BatteryController {
     }
 
     @PostMapping()
-    public ResponseEntity<ResponseDto> addBatteries(@RequestBody @Valid List<BatteryRequest> batteryRequestList) {
+    public ResponseEntity<ResponseDto> addBatteries(@RequestBody
+                                                        @NotEmpty(message = "Battery list cannot be empty")
+                                                        @Valid List<BatteryRequest> batteryRequestList) {
         log.info("POST /api/batteries - Received request to add {} batteries", batteryRequestList.size());
         ResponseDto responseDto = batteryService.addBatteries(batteryRequestList);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
